@@ -1,0 +1,24 @@
+<h2>Tu carrito</h2>
+<ul>
+  {{#each cart.products}}
+    <li>Producto:
+      {{this.product.title}}
+      ---- Cantidad:
+      {{this.quantity}}
+      ---- Precio:
+      {{this.product.price}}</li>
+
+  {{/each}}
+</ul>
+
+<form
+  action="http://localhost:{{port}}/api/carts/{{cart._id}}/purchase"
+  method="get"
+>
+  <button type="submit">COMPRAR</button></form>
+
+<div style="margin-top: 10px;">
+  <a href="http://localhost:{{port}}/products" style="margin: 0 5px">Ver más
+    productos</a>
+  <a href="http://localhost:{{port}}/profile" style="margin: 0 5px">Ver perfil</a>
+</div>

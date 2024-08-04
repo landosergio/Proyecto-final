@@ -1,0 +1,237 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtiene la lista de productos paginada según las opciones indicadas.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Retorna la lista de productos y la información de paginación.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#components/schemas/ProductsPagination"
+        "500":
+          description: Error interno del servidor.
+    post:
+      summary: Agrega un nuevo producto.
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/createProduct"
+      responses:
+        "200":
+          description: Se agrega el producto.
+        "404":
+          description: Se ingresó de manera errónea alguno de los datos del producto.
+        "500":
+          description: Error interno del servidor.
+
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un producto por su Id.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id de un producto.
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Retorna el producto solicitado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: object
+                    description: Objeto con los datos del producto.
+                    $ref: "#components/schemas/Product"
+        "404":
+          description: No se encontró el producto con ese Id.
+        "500":
+          description: Error interno del servidor.
+
+    put:
+      summary: Modifica un producto según su id y los campos ingresados.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id de un producto.
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateProduct"
+
+      responses:
+        "200":
+          description: Actualiza el producto.
+        "400":
+          description: Alguno de los campos se ingresó con un formato incorrecto.
+        "403":
+          description: El usuario no es dueño del producto que intenta actualizar.
+        "404":
+          description: No se encontró el producto con ese Id.
+        "500":
+          description: Error interno del servidor.
+
+    delete:
+      summary: Elimina un producto por su Id.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: Id de un producto.
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Elimina el producto solicitado.
+        "404":
+          description: No se encontró el producto con ese Id.
+        "500":
+          description: Error interno del servidor.
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado por Mongo.
+        title:
+          type: string
+          description: Nombre del producto.
+        description:
+          type: string
+          description: Descripción del producto.
+        price:
+          type: number
+          description: Precio del producto.
+        thumbnail:
+          type: array
+          description: Imágenes del producto.
+        code:
+          type: string
+          description: Código del producto.
+        stock:
+          type: number
+          description: Cantidad del producto en stock.
+        status:
+          type: Boolean
+          description: Es un misterio
+        owner:
+          type: string
+          description: Referencia al dueño del producto.
+      example:
+        _id: ObjectId("664a6aff65727315cb5e3320")
+        title: Televisor Samsung
+        description: El mejor televisor para ver el Mundial 2026
+        price: 999.999
+        thumbnail: []
+        code: SSS-111
+        stock: 75
+        status: true
+        owner: samsungstore@gmail.com
+    ProductsPagination:
+      type: object
+      properties:
+        payload:
+          type: array
+          description: Array con los productos.
+          items:
+            $ref: "#components/schemas/Product"
+        totalPages:
+          type: number
+          description: Cantidad total de páginas.
+          example: 7
+        prevPage:
+          type: number
+          description: Página anterior.
+          example: 1
+        nextPage:
+          type: number
+          description: Página siguiente.
+          example: 3
+        page:
+          type: number
+          description: Página actual.
+          example: 2
+        hasPrevPage:
+          type: boolean
+          description: Existe o no la página anterior.
+          example: true
+        hasNextPage:
+          type: boolean
+          description: Existe o no la página siguiente.
+          example: true
+        prevLink:
+          type: string
+          description: Link a la página anterior.
+          example: "http://localhost:8080/api/products/?limit=10&page=1"
+        nextLink:
+          type: string
+          description: Link a la página siguiente.
+          example: "http://localhost:8080/api/products/?limit=10&page=3"
+
+  requestBodies:
+    createProduct:
+      type: object
+      $ref: "#components/schemas/Product"
+    updateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Nombre del producto.
+          required: false
+        description:
+          type: string
+          description: Descripción del producto.
+          required: false
+        price:
+          type: number
+          description: Precio del producto.
+        thumbnail:
+          type: array
+          description: Imágenes del producto.
+        code:
+          type: string
+          description: Código del producto.
+        stock:
+          type: number
+          description: Cantidad del producto en stock.
+        status:
+          type: boolean
+          description: Es un misterio
+        owner:
+          type: string
+          description: Referencia al dueño del producto.
+      example:
+        title: Televisor LG
+        description: El segundo mejor televisor para ver el Mundial 2026
+        price: 888.777
+        thumbnail: []
+        code: LLL-111
+        stock: 40
+        status: true
+        owner: lgstore@gmail.com

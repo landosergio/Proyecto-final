@@ -1,0 +1,44 @@
+{{#if logueado}}
+  <p>Ya estás logueado</p>
+  <a href="http://localhost:{{port}}/profile" style="margin: 0 5px">Ver perfil</a>
+  <a href="http://localhost:{{port}}/products" style="margin: 0 5px">Ir a
+    comprar</a>
+
+  <a href="http://localhost:{{port}}/carts/{{dbUser.cart._id}}">Carrito</a>
+
+  <form action="/api/sessions/logout" method="get"><button
+      type="submit"
+    >LOGOUT</button></form>
+
+{{else}}
+
+  <form
+    action="/api/sessions/login"
+    method="post"
+    style="width:20rem;display:flex;flex-direction: column;"
+  >
+
+    <label for="email">Email:
+      <input id="email" name="email" type="email" /></label>
+    <label for="password">Contraseña:<input
+        id="password"
+        name="password"
+        type="password"
+      /></label>
+
+    <button type="submit">Enviar</button>
+  </form>
+  <div style="display:flex">
+    <a href="http://localhost:{{port}}/register" style="margin-right:1rem">¿No
+      tenés cuenta?¡Registrate!</a>
+    <a href="http://localhost:{{port}}/restorePassword01">¿Olvidaste tu
+      contraseña?¡Hacé click acá!</a>
+  </div>
+  <div style="margin: 2rem 0">
+    <a href="/api/sessions/github"><button>Entrar con Github</button></a>
+  </div>
+{{/if}}
+
+{{#if loginError}}
+  <p>"Nombre de usuario o contraseña incorrecto"</p>
+{{/if}}

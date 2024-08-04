@@ -1,0 +1,45 @@
+{{#if logueado}}
+
+  <h2>Hola {{dbUser.first_name}} {{dbUser.last_name}}</h2>
+  <a href="http://localhost:{{port}}/profile"style="margin: 0 5px">Ver perfil</a>
+  <a href="http://localhost:{{port}}/carts/{{dbUser.cart._id}}">Carrito</a>
+
+
+   <form action="/api/sessions/logout" method="get"><button
+      type="submit"
+    >LOGOUT</button></form>
+
+{{else}}
+  <p>Para poder comprar tenés que loguearte o crear una cuenta</p>
+
+  <a href="http://localhost:{{port}}/login">Login</a>
+  <a href="http://localhost:{{port}}/register">Crear cuenta</a>
+
+{{/if}}
+
+
+<h2>Productos</h2>
+<ul>
+  {{#each productsPagination.payload}}
+
+    <li>Producto: {{this.title}} - - Precio: {{this.price}}</li>
+    {{#if ../logueado}}
+
+      <form
+        action="/api/carts/{{../dbUser.cart._id}}/products/{{this._id}}"
+        method="post"
+      >
+        <button type="submit">Agregar al carrito</button>
+      </form>
+    {{/if}}
+
+  {{/each}}
+</ul>
+<div>
+  {{#if productsPagination.hasPrevPage}}
+    <a href={{productsPagination.prevLink}}>Anterior</a>
+  {{/if}}
+  {{#if productsPagination.hasNextPage}}
+    <a href={{productsPagination.nextLink}}>Siguiente</a>
+  {{/if}}
+</div>

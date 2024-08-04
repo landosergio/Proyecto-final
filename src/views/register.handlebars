@@ -1,0 +1,31 @@
+{{#if logueado}}
+  <p>¡Ya estás registrado!</p>
+  <a href="http://localhost:{{port}}/profile">Ver perfil</a>
+  <a href="http://localhost:{{port}}/products">Ir a comprar</a>
+
+{{else}}
+  <p>Creá tu cuenta de usuario:</p>
+  <form
+    action="/api/sessions/register"
+    method="post"
+    style="width:20rem;display:flex;flex-direction: column;"
+  >
+    <label for="first_name">Nombre:
+      <input id="first_name" name="first_name" type="text" /></label>
+    <label for="last_name">Apellido:
+      <input id="last_name" name="last_name" type="text" /></label>
+    <label for="email">Email:
+      <input id="email" name="email" type="email" /></label>
+    <label for="age">Edad: <input id="age" name="age" type="number" /></label>
+    <label for="password">Contraseña:<input
+        id="password"
+        name="password"
+        type="password"
+      /></label>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <a href="http://localhost:{{port}}/login">¿Ya tenés cuenta?¡Logueate!</a>
+
+{{/if}}

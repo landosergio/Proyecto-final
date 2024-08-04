@@ -1,0 +1,27 @@
+{{#if logueado}}
+
+  <p>Nombre: {{dbUser.first_name}}</p>
+  <p>Apellido: {{dbUser.last_name}}</p>
+  <p>Edad: {{dbUser.age}}</p>
+  <p>Rol: {{dbUser.role}}</p>
+
+  <form action="/api/sessions/logout" method="get"><button
+      type="submit"
+    >LOGOUT</button></form>
+
+  {{#if premium}}
+    <a href="http://localhost:{{port}}/addProduct">¡Subí un producto para
+      vender!</a>
+  {{/if}}
+
+  <a href="http://localhost:{{port}}/products" style="margin: 0 5px">Ver
+    productos</a>
+  <a href="http://localhost:{{port}}/carts/{{dbUser.cart._id}}">Carrito</a>
+
+{{else}}
+  <p>Primero debes loguearte o crear una cuenta</p>
+
+  <a href="http://localhost:{{port}}/login">Login</a>
+  <a href="http://localhost:{{port}}/register">Crear cuenta</a>
+
+{{/if}}

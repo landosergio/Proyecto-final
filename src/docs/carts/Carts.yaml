@@ -1,0 +1,317 @@
+paths:
+  /api/carts:
+    post:
+      summary: Agrega un carrito con sus productos.
+      tags:
+        - Carts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateCart"
+      responses:
+        "200":
+          description: Se agrega el carrito.
+        "500":
+          description: Error interno del servidor.
+
+  /api/carts/{cid}:
+    get:
+      summary: Obtiene un carrito por su Id, retornando un array con sus productos.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id de un carrito.
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Retorna un objeto y dentro de él un array con los productos del carrito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: array
+                    description: Array con los productos del carrito.
+                    items:
+                      $ref: "#components/schemas/Product"
+        "404":
+          description: No se encontró el carrito con ese Id.
+        "500":
+          description: Error interno del servidor.
+    put:
+      summary: Actualiza el carrito en base a un array de productos.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id de un carrito.
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateCart"
+      responses:
+        "200":
+          description: Se actualiza el carrito.
+        "404":
+          description: No se encontró el carrito con ese Id.
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina un carrito por su Id.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id de un carrito.
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Se elimina el carrito indicado.
+        "404":
+          description: No se encontró el carrito con ese Id.
+        "500":
+          description: Error interno del servidor.
+
+  /api/{cid}/products/{pid}:
+    post:
+      summary: Agrega un producto a un carrito según los Ids indicados.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id de un carrito.
+          schema:
+            $type: string
+        - name: pid
+          in: path
+          required: true
+          description: Id de un producto.
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: El producto se añade al carrito.
+        "404":
+          description: No se encontraron el carrito o el producto con los Ids indicados.
+        "500":
+          description: Error interno del servidor.
+    put:
+      summary: Actualiza la cantidad de un producto en un carrito según los Ids y el número indicado.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id de un carrito.
+          schema:
+            $type: string
+        - name: pid
+          in: path
+          required: true
+          description: Id de un producto.
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/updateProductQuantity"
+      responses:
+        "200":
+          description: Se actualiza la cantidad del producto en el carrito.
+        "404":
+          description: No se encontraron el carrito o el producto con los Ids indicados o el carrito no contenía el producto.
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina un producto de un carrito según los Ids indicados.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id de un carrito.
+          schema:
+            $type: string
+        - name: pid
+          in: path
+          required: true
+          description: Id de un producto.
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Se elimina el producto del carrito.
+        "404":
+          description: No se encontraron el carrito o el producto con los Ids indicados o el carrito no contenía el producto.
+        "500":
+          description: Error interno del servidor.
+
+  /api/carts/{cid}/purchase:
+    get:
+      summary: Realiza la compra de los productos que se encuentran en el carrito y devuelve un ticket con la información de la misma.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id de un carrito.
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Ticket con la información de la compra.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Código de compra.
+                  purchase_datetime:
+                    type: date
+                    description: Fecha de la compra.
+                  amount:
+                    type: number
+                    description: Valor total de la compra.
+                  purchaser:
+                    type: string
+                    description: Email del comprador.
+                example:
+                  code: 4
+                  purchase_datetime: 2024-05-22T21:30:48.321+00:00
+                  amount: 1862
+                  purchaser: yo@gmail.com
+        "404":
+          description: No se encontró el carrito con ese Id.
+        "500":
+          description: Error interno del servidor.
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado por Mongo.
+        products:
+          type: array
+          items:
+            $ref: "#components/schemas/Product"
+          description: Productos que contiene el carrito.
+      example:
+        _id: ObjectId("664c042e42fc7ab0beefe821")
+        products:
+          [
+            {
+              _id: ObjectId("664a6aff65727315cb5e3320"),
+              title: Televisor Samsung,
+              description: El mejor televisor para ver el Mundial 2026,
+              price: 999999,
+              thumbnail: [],
+              code: SSS-111,
+              stock: 75,
+              status: true,
+              owner: samsungstore@gmail.com,
+            },
+          ]
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado por Mongo.
+        title:
+          type: string
+          description: Nombre del producto.
+        description:
+          type: string
+          description: Descripción del producto.
+        price:
+          type: number
+          description: Precio del producto.
+        thumbnail:
+          type: array
+          description: Imágenes del producto.
+        code:
+          type: string
+          description: Código del producto.
+        stock:
+          type: number
+          description: Cantidad del producto en stock.
+        status:
+          type: Boolean
+          description: Es un misterio
+        owner:
+          type: string
+          description: Referencia al dueño del producto.
+      example:
+        _id: ObjectId("664a6aff65727315cb5e3320")
+        title: Televisor Samsung
+        description: El mejor televisor para ver el Mundial 2026
+        price: 999.999
+        thumbnail: []
+        code: SSS-111
+        stock: 75
+        status: true
+        owner: samsungstore@gmail.com
+    ProductForCart:
+      type: object
+      properties:
+        product:
+          type: ObjectId
+          description: Id del producto que se desea agregar.
+        quantity:
+          type: number
+          description: Cantidad del producto en el carrito.
+      example:
+        product: 65df6a5ced26c37ebfc1cfc2
+        quantity: 5
+  requestBodies:
+    createCart:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#components/schemas/ProductForCart"
+    updateCart:
+      type: array
+      items:
+        $ref: "#components/schemas/ProductForCart"
+      example:
+        [
+          { product: 65df6a5ced26c37ebfc1cfc2, quantity: 3 },
+          { product: 65df625cad26c35ebfc1cfc2, quantity: 8 },
+        ]
+    updateProductQuantity:
+      type: object
+      properties:
+        quantity:
+          type: number
+          description: Nueva cantidad del producto.
+          example: 4

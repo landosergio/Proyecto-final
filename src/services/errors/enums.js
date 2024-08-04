@@ -1,0 +1,7 @@
+const EErrors = {
+  MISSING_OR_WRONG_DATA_ERRORS: 400,
+  DATABASE_ERRORS: 500,
+  WRONG_CREDENTIALS_ERRORS: 401,
+};
+
+export default EErrors;
